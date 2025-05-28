@@ -1,0 +1,9 @@
+.vscode
+*.bin
+*.o
+*.lst
+*.elf
+*.map
+this.code-workspace
+practica-clases/
+tp-template/
