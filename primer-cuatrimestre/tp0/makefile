@@ -16,7 +16,7 @@ $(BIN)bios.bin: $(OBJ)bios.elf
 
 #$(CHAIN)-ld --defsym BOOT_START_ADDR=$(START_ADDR) -T td3bbb_memmap.ld $(OBJ)*.o -o $(OBJ)bios.elf -Map $(LST)bios_ld_map.map 
 
-$(OBJ)bios.elf: $(OBJ)startup.o #$(OBJ)reset_vector.o $(OBJ)exception_handlers.o
+$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o
 	@echo "Linkeando..."
 	mkdir -p obj
 	mkdir -p lst
@@ -51,13 +51,13 @@ $(OBJ)reset_vector.o: $(SRC)reset_vector.s
 	$(CHAIN)-as $(AFLAGS) $(SRC)reset_vector.s -o $(OBJ)reset_vector.o -a > $(LST)reset_vector.lst
 
 # Ensamblamos: reset_vector.s
-$(OBJ)exception_handlers.o: $(SRC)exception_handlers.s
+$(OBJ)handlers.o: $(SRC)handlers.s
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst	
-	@echo "Ensamblando exception_handlers.s ..."
-	$(CHAIN)-as $(AFLAGS) $(SRC)exception_handlers.s -o $(OBJ)exception_handlers.o -a > $(LST)exception_handlers.lst
+	@echo "Ensamblando handlers.s ..."
+	$(CHAIN)-as $(AFLAGS) $(SRC)handlers.s -o $(OBJ)handlers.o -a > $(LST)handlers.lst
 
 clean:
 	rm -rf $(OBJ)*.o

@@ -6,6 +6,8 @@
 .extern irq_handler
 .extern fiq_handler
 
+.global _start
+
 .section start
 table:
   LDR PC, _reset_vector

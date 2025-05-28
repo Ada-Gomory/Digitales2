@@ -7,19 +7,19 @@
 
 .section text_hands
 undef_handler:
-  B.
+  B .
   
 softirq_hanlder:
-  B.
+  B .
 
 pref_abort:
-  B.
+  B .
 
 data_abort:
-  B.
+  B .  
   
 irq_handler:
-  B.
+  B .
 
 fiq_handler:
-  B.
+  B .
