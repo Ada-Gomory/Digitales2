@@ -1,9 +1,24 @@
-.vscode
-*.bin
-*.o
-*.lst
-*.elf
-*.map
-this.code-workspace
+# Ignore all 
+* 
+
+# Unignore all with extensions *.c *.h *.txt y con Makefile 
+!*.c 
+!*.h 
+!Makefile 
+!*.txt
+!*.cpp
+!*.hpp
+!*README*
+!*make*
+!*suite*
+!*.asm
+!*.s
+!*.inc
+!*.ld
+# Unignore all dirs
+!*/.
+
+#Ignore Misc Dirs
+vscode/
 practica-clases/
 tp-template/
