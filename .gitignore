@@ -16,7 +16,7 @@
 !*.inc
 !*.ld
 # Unignore all dirs
-!*/.
+!*/
 
 #Ignore Misc Dirs
 vscode/
