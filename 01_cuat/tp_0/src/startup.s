@@ -1,3 +1,4 @@
+.global _start
 .extern reset_vector
 .extern undef_handler
 .extern softirq_hanlder
@@ -5,10 +6,10 @@
 .extern data_abort
 .extern irq_handler
 .extern fiq_handler
+.extern idle
+.code 32
 
-.global _start
-
-.section start
+.section .start
 table:
   LDR PC, _reset_vector
   LDR PC, _undef_handler
@@ -30,15 +31,19 @@ table:
 _start:
   table_copy:
     table_length: #_start - #table
-    
-    MOV r1, #_start
+
+    SUB r1, pc, #8     
     MOV r0, #table_length
     loop_tablecpy:              //{
       LDR r2, [r1, #-4]!        //*(r0 -= 4) = *(r1 -= 4) //preindexed, r1 es 1-idexado
       STR r2, [r0, #-4]!
       CMP r0, #0
       BNE loop_tablecpy         //} while(r0 != 0)
-  
-  stack_pointer_init:
-    MSR cpsr_c, #()
-    LDR SP,= 
+
+_test:
+  B 0x70000004
+
+_end:
+  B idle
+.end
+

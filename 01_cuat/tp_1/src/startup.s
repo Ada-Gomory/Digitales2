@@ -1,3 +1,4 @@
+.global _start
 .extern reset_vector
 .extern undef_handler
 .extern softirq_hanlder
@@ -5,10 +6,17 @@
 .extern data_abort
 .extern irq_handler
 .extern fiq_handler
+.extern idle
+.extern _USER_STACK_INIT
+.extern _FIQ_STACK_INIT
+.extern _IRQ_STACK_INIT
+.extern _SVC_STACK_INIT
+.extern _ABORT_STACK_INIT
+.extern _UNDEF_STACK_INIT
+.extern _SYSTEM_STACK_INIT
+.code 32
 
-.global _start
-
-.section start
+.section .start
 table:
   LDR PC, _reset_vector
   LDR PC, _undef_handler
@@ -30,15 +38,44 @@ table:
 _start:
   table_copy:
     table_length: #_start - #table
-    
-    MOV r1, #_start
+
+    SUB r1, pc, #8     
     MOV r0, #table_length
     loop_tablecpy:              //{
       LDR r2, [r1, #-4]!        //*(r0 -= 4) = *(r1 -= 4) //preindexed, r1 es 1-idexado
       STR r2, [r0, #-4]!
       CMP r0, #0
       BNE loop_tablecpy         //} while(r0 != 0)
-  
-//  stack_pointer_init:
-//    MSR cpsr_c, #()
-//    LDR SP,= 
+
+
+  stack_pointer_init:
+    MSR cpsr_c, #(0x10|0x40|0x20)   //User
+    LDR SP,=_USER_STACK_INIT
+
+    MSR cpsr_c, #(0x11|0x40|0x20)   //FIQ
+    LDR SP,=_FIQ_STACK_INIT
+
+    MSR cpsr_c, #(0x12|0x40|0x20)   //IRQ
+    LDR SP,=_IRQ_STACK_INIT
+
+    MSR cpsr_c, #(0x13|0x40|0x20)   //SVC
+    LDR SP,=_SVC_STACK_INIT
+
+    MSR cpsr_c, #(0x17|0x40|0x20)   //Abort
+    LDR SP,=_ABORT_STACK_INIT
+
+    MSR cpsr_c, #(0x1b|0x40|0x20)   //Undef
+    LDR SP,=_UNDEF_STACK_INIT 
+
+    MSR cpsr_c, #(0x1f|0x40|0x20)   //Sys
+    LDR SP,=_SYSTEM_STACK_INIT
+
+  B idle
+.end
+
+
+
+
+
+
+

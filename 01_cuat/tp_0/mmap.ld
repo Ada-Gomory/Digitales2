@@ -29,6 +29,7 @@ SECTIONS
     . = _PUBLIC_RAM_INIT;
     .text : { 
         *(.reset_vector_code*)
+        *(.handlers*) 
         *(.start*)
         *(.text*) 
         } > public_ram
