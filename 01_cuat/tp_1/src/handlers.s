@@ -28,7 +28,7 @@ data_abort:
   
 irq_handler:
   SUB LR, LR, #4
-  PUSH {R0-R12, LR}
+  STMFD SP!, {R0-R12, LR}
   MOV R7, SP
   MRS R8, SPSR
   PUSH {R7, R8}
@@ -39,7 +39,7 @@ irq_handler:
   POP {R7, R8}
   MSR SPSR, R8
   MOV SP, R7
-  POP {R0-R12, PC}
+  LDMFD SP!, {R0-R12, PC}
 
 fiq_handler:
   B idle
