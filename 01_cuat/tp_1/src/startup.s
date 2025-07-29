@@ -7,6 +7,7 @@
 .extern irq_handler
 .extern fiq_handler
 .extern idle
+//LD
 .extern _USER_STACK_INIT
 .extern _FIQ_STACK_INIT
 .extern _IRQ_STACK_INIT
@@ -14,6 +15,8 @@
 .extern _ABORT_STACK_INIT
 .extern _UNDEF_STACK_INIT
 .extern _SYSTEM_STACK_INIT
+//ABI
+.extern __timer_init
 .code 32
 
 .section .start
@@ -69,6 +72,13 @@ _start:
 
     MSR cpsr_c, #(0x1f|0x40|0x20)   //Sys
     LDR SP,=_SYSTEM_STACK_INIT
+
+
+  
+  //board init
+    BL __timer_init
+
+  MSR cpsr_c, #(0x1f)   //Enable irqs
 
   B idle
 .end

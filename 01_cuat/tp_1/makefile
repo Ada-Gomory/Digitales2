@@ -1,5 +1,5 @@
 CHAIN=arm-none-eabi
-CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g
+CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 # CFLAGS=-std=gnu99 -Wall -mfpu=neon -mcpu=cortex-a8
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
@@ -15,8 +15,8 @@ $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
 #$(CHAIN)-ld --defsym BOOT_START_ADDR=$(START_ADDR) -T td3bbb_memmap.ld $(OBJ)*.o -o $(OBJ)bios.elf -Map $(LST)bios_ld_map.map 
-
-$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o
+ 
+$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)uart.o $(OBJ)console_utils.o 
 	@echo "Linkeando..."
 	mkdir -p obj
 	mkdir -p lst
@@ -50,7 +50,7 @@ $(OBJ)reset_vector.o: $(SRC)reset_vector.s
 	@echo "Ensamblando reset_vector.s ..."
 	$(CHAIN)-as $(AFLAGS) $(SRC)reset_vector.s -o $(OBJ)reset_vector.o -a > $(LST)reset_vector.lst
 
-# Ensamblamos: reset_vector.s
+# Ensamblamos: handlers.s
 $(OBJ)handlers.o: $(SRC)handlers.s
 	@echo ""
 	mkdir -p bin
@@ -58,6 +58,55 @@ $(OBJ)handlers.o: $(SRC)handlers.s
 	mkdir -p lst	
 	@echo "Ensamblando handlers.s ..."
 	$(CHAIN)-as $(AFLAGS) $(SRC)handlers.s -o $(OBJ)handlers.o -a > $(LST)handlers.lst
+
+# Compilamos: low_level_cpu_access.s
+$(OBJ)low_level_cpu_access.o: $(SRC)utils/low_level_cpu_access.s
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Ensamblando low_level_cpu_access.s ..."
+	$(CHAIN)-as $(AFLAGS) $(SRC)utils/low_level_cpu_access.s -o $(OBJ)low_level_cpu_access.o -a > $(LST)low_level_cpu_access.lst
+
+#
+# Compilado de codigo c
+#
+
+# Compilamos: timer.o
+$(OBJ)timer.o : $(SRC)board/timer.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando timer.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/timer.c -o $(OBJ)timer.o 
+
+# Compilamos: gic.o
+$(OBJ)gic.o : $(SRC)board/gic.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando gic.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/gic.c -o $(OBJ)gic.o 
+
+# Compilamos: uart.o
+$(OBJ)uart.o : $(SRC)board/uart.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando uart.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/uart.c -o $(OBJ)uart.o 
+
+# Compilamos: console_utils.o
+$(OBJ)console_utils.o : $(SRC)utils/console_utils.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando console_utils.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)utils/console_utils.c -o $(OBJ)console_utils.o 
 
 clean:
 	rm -rf $(OBJ)*.o
