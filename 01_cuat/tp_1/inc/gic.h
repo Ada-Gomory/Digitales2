@@ -61,7 +61,6 @@ typedef volatile struct
         reserved_bits(9, 0x0F04, 0x0FFC);
     } _gicd_t;
 
-
 extern void __gic_init(void );
 
 

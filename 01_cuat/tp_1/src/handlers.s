@@ -1,46 +1,42 @@
+.extern __kernle_handler_irq
+.extern __idle
 .global undef_handler
 .global softirq_hanlder
 .global pref_abort
 .global data_abort
 .global irq_handler
 .global fiq_handler
-.global idle
 .code 32
-
-
 .section .handlers
 
-idle: 
-  WFI
-  B idle
-
 undef_handler:
-  B idle
+  B __idle
   
 softirq_hanlder:
-  B idle
+  B __idle
 
 pref_abort:
-  B idle
+  B __idle
 
 data_abort:
-  B idle
+  B __idle
   
 irq_handler:
   SUB LR, LR, #4
   STMFD SP!, {R0-R12, LR}
   MOV R7, SP
-  MRS R8, SPSR
-  PUSH {R7, R8}
+  MRS R8, CPSR                  //MRS R8, SPSR causes undef exep FIXME: maybe, perhaps this is fine idfk
+  PUSH {R7, R8}                                                //NOTE: prolly it's me testing this by doing BL 0x18
 
   MOV R0, SP
-  //BL kernel_handler_irq       //k_h_i(*sp);
+  BL __kernle_handler_irq       //k_h_i(*sp);
+
 
   POP {R7, R8}
-  MSR SPSR, R8
+  MSR CPSR, R8                  //MSR SPSR, R8 causes undef exep
   MOV SP, R7
   LDMFD SP!, {R0-R12, PC}
 
 fiq_handler:
-  B idle
+  B __idle
 .end

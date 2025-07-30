@@ -224,7 +224,7 @@ again:
                 }
 
                 /*
-                ** Handle the %x and %X commands.  Note that they are treated
+                ** Handle the %x and %X commands.  NOTE that they are treated
                 ** identically; i.e. %X will use lower case letters for a-f
                 ** instead of the upper case letters it should use.  We also
                 ** alias %p to %x.

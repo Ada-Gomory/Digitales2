@@ -1,5 +1,6 @@
 CHAIN=arm-none-eabi
-CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
+#CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
+CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 # CFLAGS=-std=gnu99 -Wall -mfpu=neon -mcpu=cortex-a8
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
@@ -8,15 +9,16 @@ INC=inc/
 SRC=src/
 LST=lst/
 
-# all: $(BIN)bios.bin $(BIN)bios.MLO $(OBJ)bios.elf
+# all: $(BIN)bios.bin $(BIN)bios.MLO $(OBJ)bios.elf 
 all: $(BIN)bios.bin $(OBJ)bios.elf
 
 $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
 #$(CHAIN)-ld --defsym BOOT_START_ADDR=$(START_ADDR) -T td3bbb_memmap.ld $(OBJ)*.o -o $(OBJ)bios.elf -Map $(LST)bios_ld_map.map 
+#TODO: iterate this shit ffs. christ
  
-$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)uart.o $(OBJ)console_utils.o 
+$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)board_init.o $(OBJ)kernel_handler_irq.o $(OBJ)uart.o $(OBJ)console_utils.o
 	@echo "Linkeando..."
 	mkdir -p obj
 	mkdir -p lst
@@ -79,7 +81,7 @@ $(OBJ)timer.o : $(SRC)board/timer.c
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando timer.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/timer.c -o $(OBJ)timer.o 
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/timer.c -o $(OBJ)timer.o -Wa,-a > $(LST)timer.lst
 
 # Compilamos: gic.o
 $(OBJ)gic.o : $(SRC)board/gic.c
@@ -88,7 +90,7 @@ $(OBJ)gic.o : $(SRC)board/gic.c
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando gic.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/gic.c -o $(OBJ)gic.o 
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/gic.c -o $(OBJ)gic.o -Wa,-a > $(LST)gic.lst
 
 # Compilamos: uart.o
 $(OBJ)uart.o : $(SRC)board/uart.c
@@ -97,7 +99,16 @@ $(OBJ)uart.o : $(SRC)board/uart.c
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando uart.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/uart.c -o $(OBJ)uart.o 
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/uart.c -o $(OBJ)uart.o -Wa,-a > $(LST)uart.lst
+
+# Compilamos: board_init.o
+$(OBJ)board_init.o : $(SRC)board/board_init.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando board_init.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/board_init.c -o $(OBJ)board_init.o -Wa,-a > $(LST)board_init.lst
 
 # Compilamos: console_utils.o
 $(OBJ)console_utils.o : $(SRC)utils/console_utils.c
@@ -106,7 +117,16 @@ $(OBJ)console_utils.o : $(SRC)utils/console_utils.c
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando console_utils.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)utils/console_utils.c -o $(OBJ)console_utils.o 
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)utils/console_utils.c -o $(OBJ)console_utils.o -Wa,-a > $(LST)console_utils.lst
+
+# Compilamos: kernel_handler_irq.o
+$(OBJ)kernel_handler_irq.o : $(SRC)kernel_handler_irq.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando kernel_handler_irq.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)kernel_handler_irq.c -o $(OBJ)kernel_handler_irq.o  -Wa,-a > $(LST)kernel_handler_irq.lst
 
 clean:
 	rm -rf $(OBJ)*.o

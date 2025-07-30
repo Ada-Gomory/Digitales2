@@ -6,7 +6,7 @@
 .extern data_abort
 .extern irq_handler
 .extern fiq_handler
-.extern idle
+.extern __idle
 //LD
 .extern _USER_STACK_INIT
 .extern _FIQ_STACK_INIT
@@ -16,7 +16,7 @@
 .extern _UNDEF_STACK_INIT
 .extern _SYSTEM_STACK_INIT
 //ABI
-.extern __timer_init
+.extern __board_init
 .code 32
 
 .section .start
@@ -52,7 +52,7 @@ _start:
 
 
   stack_pointer_init:
-    MSR cpsr_c, #(0x10|0x40|0x20)   //User
+    MSR cpsr_c, #(0x10|0x40|0x20)   //User  FIXME: cpsr dont change
     LDR SP,=_USER_STACK_INIT
 
     MSR cpsr_c, #(0x11|0x40|0x20)   //FIQ
@@ -73,16 +73,16 @@ _start:
     MSR cpsr_c, #(0x1f|0x40|0x20)   //Sys
     LDR SP,=_SYSTEM_STACK_INIT
 
-
+    MSR cpsr_c, #(0x1f)             //Enable irqs
   
-  //board init
-    BL __timer_init
+  board_init:
+    BL __board_init
 
-  MSR cpsr_c, #(0x1f)   //Enable irqs
-
-  B idle
+  //test_irq_hands:       //NOTE:branching to irq handler as opposed to interruptiong causes bx to return to this instruction, executing it again.
+  //BL 0x70000018         //TODO:test this like, properly
+                          
+  B __idle
 .end
-
 
 
 

@@ -28,6 +28,7 @@ extern uint8_t _READ_8(uint32_t );
 extern uint16_t _READ_16(uint32_t );
 extern uint32_t _READ_32(uint32_t );
 extern uint32_t _READ_CPSR_REGS(void);
+void __idle(void);
 
 #define HALT_CPU_m  asm("WFI");
 

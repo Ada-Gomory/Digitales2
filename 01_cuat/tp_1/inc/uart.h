@@ -17,7 +17,7 @@
  * - Section 3.3, which summarises the internal structure of each device
  *   register.
  * 
- * Note that the field identifiers used here follow the documentation in a
+ * NOTE that the field identifiers used here follow the documentation in a
  * general sense, but with a some minor alterations to improve clarity and
  * consistency.
  */

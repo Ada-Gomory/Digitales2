@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define reserved_bits(x,y,z) uint8_t reserved##x[ z - y + 1 ];
+#define reserved_bits(x,y,z) uint8_t reserved##x[ z - y + 1 ];  //FIXME: repeated definition throws warn
 
 #define TIMER0_ADDR 0x10011000
 #define TIMER1_ADDR 0x10012000
