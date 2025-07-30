@@ -1,7 +1,5 @@
 
-#include "../../inc/gic.h"
-#include "../../inc/timer.h"
-#include "../../inc/low_level_cpu_access.h"
+#include "../../inc/include.h"
 
 void __board_init(void );
 

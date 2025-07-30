@@ -1,8 +1,7 @@
 #ifndef __GIC_LIB_H
 #define __GIC_LIB_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "define.h"
 
 #define GICC0_ADDR 0x1E000000
 #define GICD0_ADDR 0x1E001000
@@ -22,8 +21,6 @@
 #define GIC_SOURCE_UART1 45
 #define GIC_SOURCE_UART2 46
 #define GIC_SOURCE_UART3 47
-
-#define reserved_bits(x,y,z) uint8_t reserved##x[z - y + 1];
 
 typedef volatile struct
     {

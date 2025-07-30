@@ -1,8 +1,7 @@
 #ifndef __UART_H
 #define __UART_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "define.h"
 
 /* The ARM PrimeCell UART (uart) is documented at
  *
@@ -27,17 +26,15 @@
 #define UART2_ADDR 0x1000B000
 #define UART3_ADDR 0x1000C000
 
-#define RSVD(x,y,z) uint8_t reserved##x[ z - y + 1 ];
-
 typedef volatile struct {
   uint32_t    DR;            // base+0x0000          : data
 union {
   uint32_t   RSR;            // base+0x0004          : receive status
   uint32_t   ECR;            //                      | error   clear
 } ;
-  RSVD( 0, 0x0008, 0x0017 ); // base+0x0008...0x0017 : reserved
+  reserved_bits( 0, 0x0008, 0x0017 ); // base+0x0008...0x0017 : reserved
   uint32_t    FR;            // base+0x0018          : flag
-  RSVD( 1, 0x001C, 0x001F ); // base+0x001C...0x001F : reserved
+  reserved_bits( 1, 0x001C, 0x001F ); // base+0x001C...0x001F : reserved
   uint32_t   LPR;            // base+0x0020          : low-power counter
   uint32_t  IBRD;            // base+0x0024          : integer    baud rate
   uint32_t  FBRD;            // base+0x0028          : fractional baud rate
@@ -49,7 +46,7 @@ union {
   uint32_t   MIS;            // base+0x0040          : masked interrupt status
   uint32_t   ICR;            // base+0x0044          : interrupt clear
   uint32_t DMACR;            // base+0x0048          : DMA control
-  RSVD( 2, 0x004C, 0x0FDF ); // base+0x004C...0x0FDF : reserved
+  reserved_bits( 2, 0x004C, 0x0FDF ); // base+0x004C...0x0FDF : reserved
   uint32_t PeriphID[ 4 ];    // base+0x0FE0...0x0FEC : peripheral ID
   uint32_t  PCellID[ 4 ];    // base+0x0FF0...0x0FFC : PrimeCell  ID
 } _uart_t;

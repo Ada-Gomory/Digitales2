@@ -1,5 +1,5 @@
 
-#include "../../inc/timer.h"
+#include "../../inc/include.h"
 
 void __timer_init(void );
 

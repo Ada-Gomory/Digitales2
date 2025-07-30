@@ -1,5 +1,5 @@
 // Revisar que el path sea correcto en su estructura de TP
-#include "../../inc/uart.h"
+#include "../../inc/include.h"
 
 _uart_t* __uart_init(uint8_t );
 void uart_putc( _uart_t* , uint8_t );

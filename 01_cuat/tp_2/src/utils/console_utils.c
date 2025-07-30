@@ -1,7 +1,5 @@
 
-#include <stdarg.h>
-#include "../../inc/uart.h"
-#include "../../inc/console_utils.h"
+#include "../../inc/include.h"
 
 uint32_t div(uint32_t num, uint32_t den);
 void Printf(const char *string,...);

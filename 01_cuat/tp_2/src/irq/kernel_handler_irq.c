@@ -1,7 +1,5 @@
 
-#include "../../inc/gic.h"
-#include "../../inc/console_utils.h"
-#include "../../inc/scheduler.h"
+#include "../../inc/include.h"
 
 void __kernel_handler_irq(void );
 

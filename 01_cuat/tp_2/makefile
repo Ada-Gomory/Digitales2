@@ -1,5 +1,5 @@
 CHAIN=arm-none-eabi
-CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
+CFLAGS=-std=gnu99 -Wno-unused -Wno-discarded-qualifiers -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
 #CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
