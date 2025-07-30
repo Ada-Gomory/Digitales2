@@ -31,7 +31,6 @@ irq_handler:
   MOV R0, SP
   BL __kernel_handler_irq       //k_h_i(*sp);
 
-
   POP {R7, R8}
   MSR CPSR, R8                  //MSR SPSR, R8 causes undef exep
   MOV SP, R7
