@@ -1,7 +1,9 @@
+
+#TODO: iterate this shit ffs. christ
+
 CHAIN=arm-none-eabi
-#CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
-CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
-# CFLAGS=-std=gnu99 -Wall -mfpu=neon -mcpu=cortex-a8
+CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
+#CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
 BIN=bin/
@@ -9,14 +11,11 @@ INC=inc/
 SRC=src/
 LST=lst/
 
-# all: $(BIN)bios.bin $(BIN)bios.MLO $(OBJ)bios.elf 
 all: $(BIN)bios.bin $(OBJ)bios.elf
 
 $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
-#$(CHAIN)-ld --defsym BOOT_START_ADDR=$(START_ADDR) -T td3bbb_memmap.ld $(OBJ)*.o -o $(OBJ)bios.elf -Map $(LST)bios_ld_map.map 
-#TODO: iterate this shit ffs. christ
  
 $(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)board_init.o $(OBJ)kernel_handler_irq.o $(OBJ)uart.o $(OBJ)console_utils.o
 	@echo "Linkeando..."

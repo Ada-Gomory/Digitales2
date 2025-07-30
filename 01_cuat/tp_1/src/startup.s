@@ -52,25 +52,22 @@ _start:
 
 
   stack_pointer_init:
-    MSR cpsr_c, #(0x10|0x40|0x20)   //User  FIXME: cpsr dont change
-    LDR SP,=_USER_STACK_INIT
-
-    MSR cpsr_c, #(0x11|0x40|0x20)   //FIQ
+    MSR cpsr_c, #(0x11|0x80|0x40)   //FIQ; 0xd1
     LDR SP,=_FIQ_STACK_INIT
 
-    MSR cpsr_c, #(0x12|0x40|0x20)   //IRQ
+    MSR cpsr_c, #(0x12|0x80|0x40)   //IRQ; 0xd2
     LDR SP,=_IRQ_STACK_INIT
 
-    MSR cpsr_c, #(0x13|0x40|0x20)   //SVC
+    MSR cpsr_c, #(0x13|0x80|0x40)   //SVC; 0xd3
     LDR SP,=_SVC_STACK_INIT
 
-    MSR cpsr_c, #(0x17|0x40|0x20)   //Abort
+    MSR cpsr_c, #(0x17|0x80|0x40)   //Abort; 0xd7
     LDR SP,=_ABORT_STACK_INIT
 
-    MSR cpsr_c, #(0x1b|0x40|0x20)   //Undef
+    MSR cpsr_c, #(0x1b|0x80|0x40)   //Undef; 0xdb
     LDR SP,=_UNDEF_STACK_INIT 
 
-    MSR cpsr_c, #(0x1f|0x40|0x20)   //Sys
+    MSR cpsr_c, #(0x1f|0x80|0x40)   //Sys; 0xdf
     LDR SP,=_SYSTEM_STACK_INIT
 
     MSR cpsr_c, #(0x1f)             //Enable irqs

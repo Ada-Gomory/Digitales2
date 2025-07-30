@@ -29,7 +29,7 @@ irq_handler:
   PUSH {R7, R8}                                                //NOTE: prolly it's me testing this by doing BL 0x18
 
   MOV R0, SP
-  BL __kernle_handler_irq       //k_h_i(*sp);
+  BL __kernel_handler_irq       //k_h_i(*sp);
 
 
   POP {R7, R8}
