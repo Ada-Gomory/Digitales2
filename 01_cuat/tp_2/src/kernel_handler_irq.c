@@ -17,7 +17,7 @@ __attribute__((section(".kernel_text"))) void __kernel_handler_irq() {
   #endif
 
   if (interrupt_id = 36) {
-    scheduler();
+    Printf("Estoy atendiendo el timer :D\n");
   }
   
   return;
