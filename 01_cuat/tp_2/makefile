@@ -1,8 +1,5 @@
-
-#TODO: iterate this shit ffs. christ
-
 CHAIN=arm-none-eabi
-CFLAGS=-std=gnu99 -Wall -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
+CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
 #CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
@@ -17,7 +14,7 @@ $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
  
-$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)board_init.o $(OBJ)kernel_handler_irq.o $(OBJ)uart.o $(OBJ)console_utils.o
+$(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_level_cpu_access.o $(OBJ)timer.o $(OBJ)gic.o $(OBJ)uart.o $(OBJ)board_init.o $(OBJ)console_utils.o $(OBJ)kernel_handler_irq.o $(OBJ)scheduler.o 
 	@echo "Linkeando..."
 	mkdir -p obj
 	mkdir -p lst
@@ -29,36 +26,37 @@ $(OBJ)bios.elf: $(OBJ)startup.o $(OBJ)reset_vector.o $(OBJ)handlers.o $(OBJ)low_
 	@echo "Generando archivos de información: mapa de memoria y simbolos"
 	readelf -a $(OBJ)bios.elf > $(LST)bios_readelf.txt
 	$(CHAIN)-objdump -D $(OBJ)bios.elf > $(LST)bios.lst
+
 #
 # Ensamblado de código assembler
 #
 
 # Ensamblamos: startup.s
-$(OBJ)startup.o: $(SRC)startup.s
+$(OBJ)startup.o: $(SRC)kernel/startup.s
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst
 	@echo "Ensamblando startup.s ..."
-	$(CHAIN)-as $(AFLAGS) $(SRC)startup.s -o $(OBJ)startup.o -a > $(LST)startup.lst
+	$(CHAIN)-as $(AFLAGS) $(SRC)kernel/startup.s -o $(OBJ)startup.o -a > $(LST)startup.lst
 
 # Ensamblamos: reset_vector.s
-$(OBJ)reset_vector.o: $(SRC)reset_vector.s
+$(OBJ)reset_vector.o: $(SRC)kernel/reset_vector.s
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Ensamblando reset_vector.s ..."
-	$(CHAIN)-as $(AFLAGS) $(SRC)reset_vector.s -o $(OBJ)reset_vector.o -a > $(LST)reset_vector.lst
+	$(CHAIN)-as $(AFLAGS) $(SRC)kernel/reset_vector.s -o $(OBJ)reset_vector.o -a > $(LST)reset_vector.lst
 
 # Ensamblamos: handlers.s
-$(OBJ)handlers.o: $(SRC)handlers.s
+$(OBJ)handlers.o: $(SRC)irq/handlers.s
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Ensamblando handlers.s ..."
-	$(CHAIN)-as $(AFLAGS) $(SRC)handlers.s -o $(OBJ)handlers.o -a > $(LST)handlers.lst
+	$(CHAIN)-as $(AFLAGS) $(SRC)irq/handlers.s -o $(OBJ)handlers.o -a > $(LST)handlers.lst
 
 # Compilamos: low_level_cpu_access.s
 $(OBJ)low_level_cpu_access.o: $(SRC)utils/low_level_cpu_access.s
@@ -68,6 +66,7 @@ $(OBJ)low_level_cpu_access.o: $(SRC)utils/low_level_cpu_access.s
 	mkdir -p lst	
 	@echo "Ensamblando low_level_cpu_access.s ..."
 	$(CHAIN)-as $(AFLAGS) $(SRC)utils/low_level_cpu_access.s -o $(OBJ)low_level_cpu_access.o -a > $(LST)low_level_cpu_access.lst
+
 
 #
 # Compilado de codigo c
@@ -101,13 +100,13 @@ $(OBJ)uart.o : $(SRC)board/uart.c
 	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/uart.c -o $(OBJ)uart.o -Wa,-a > $(LST)uart.lst
 
 # Compilamos: board_init.o
-$(OBJ)board_init.o : $(SRC)board/board_init.c
+$(OBJ)board_init.o : $(SRC)kernel/board_init.c
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando board_init.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)board/board_init.c -o $(OBJ)board_init.o -Wa,-a > $(LST)board_init.lst
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)kernel/board_init.c -o $(OBJ)board_init.o -Wa,-a > $(LST)board_init.lst
 
 # Compilamos: console_utils.o
 $(OBJ)console_utils.o : $(SRC)utils/console_utils.c
@@ -119,13 +118,25 @@ $(OBJ)console_utils.o : $(SRC)utils/console_utils.c
 	$(CHAIN)-gcc $(CFLAGS) $(SRC)utils/console_utils.c -o $(OBJ)console_utils.o -Wa,-a > $(LST)console_utils.lst
 
 # Compilamos: kernel_handler_irq.o
-$(OBJ)kernel_handler_irq.o : $(SRC)kernel_handler_irq.c
+$(OBJ)kernel_handler_irq.o : $(SRC)irq/kernel_handler_irq.c
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj
 	mkdir -p lst	
 	@echo "Compilando kernel_handler_irq.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)kernel_handler_irq.c -o $(OBJ)kernel_handler_irq.o  -Wa,-a > $(LST)kernel_handler_irq.lst
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)irq/kernel_handler_irq.c -o $(OBJ)kernel_handler_irq.o  -Wa,-a > $(LST)kernel_handler_irq.lst
+
+# Compilamos: scheduler.o
+$(OBJ)scheduler.o : $(SRC)tasks/scheduler.c
+	@echo ""
+	mkdir -p bin
+	mkdir -p obj
+	mkdir -p lst	
+	@echo "Compilando scheduler.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)tasks/scheduler.c -o $(OBJ)scheduler.o  -Wa,-a > $(LST)scheduler.lst
+
+
+
 
 clean:
 	rm -rf $(OBJ)*.o

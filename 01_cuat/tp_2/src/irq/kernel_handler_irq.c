@@ -1,6 +1,7 @@
 
-#include "../inc/gic.h"
-#include "../inc/console_utils.h"
+#include "../../inc/gic.h"
+#include "../../inc/console_utils.h"
+#include "../../inc/scheduler.h"
 
 void __kernel_handler_irq(void );
 
@@ -17,7 +18,7 @@ __attribute__((section(".kernel_text"))) void __kernel_handler_irq() {
   #endif
 
   if (interrupt_id = 36) {
-    Printf("Estoy atendiendo el timer :D\n");
+    scheduler();
   }
   
   return;
