@@ -34,6 +34,7 @@ irq_handler:
   POP {R7, R8}
   MSR SPSR, R8                
   MOV SP, R7
+  MSR cpsr_c, #(0x1f)             //Enable irqs
   LDMFD SP!, {R0-R12, PC}
 
 fiq_handler:
