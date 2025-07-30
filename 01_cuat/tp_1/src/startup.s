@@ -74,9 +74,6 @@ _start:
   
   board_init:
     BL __board_init
-
-  //test_irq_hands:       //NOTE:branching to irq handler as opposed to interruptiong causes bx to return to this instruction, executing it again.
-  //BL 0x70000018         //TODO:test this like, properly
                           
   B __idle
 .end

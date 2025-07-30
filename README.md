@@ -5,7 +5,6 @@ TODO: Get DDD to open in fullscreen with register open as default
 ## STATUS
   TODO:FILL STATUS
   General
-  
     -Iterate makefile
 
   ~~Ej0~~
@@ -18,7 +17,7 @@ TODO: Get DDD to open in fullscreen with register open as default
     ~~-I~~
     -II
       ~~--makefile/ld~~
-        --timer
+        ~~--timer~~
         ~~--gic~~
         ~~--uart~~
       ~~--board_init()~~

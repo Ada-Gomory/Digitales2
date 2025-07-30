@@ -13,13 +13,12 @@ __attribute__((section(".kernel_text"))) void __kernel_handler_irq() {
   GICC0->EOIR = (interrupt_id & 0x0000001FF);
   
   #ifdef debug
-    Printf("Interrupcion %d atendida",interrupt_id);
+    Printf("Interrupcion %d atendida\n",interrupt_id);
   #endif
-  /*
-  wtv goes here
-  */ 
 
-  //notif device
+  if (interrupt_id = 36) {
+    Printf("Estoy atendiendo el timer :D\n");
+  }
   
   return;
 }

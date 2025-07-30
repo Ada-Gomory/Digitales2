@@ -25,14 +25,14 @@ irq_handler:
   SUB LR, LR, #4
   STMFD SP!, {R0-R12, LR}
   MOV R7, SP
-  MRS R8, CPSR                  //MRS R8, SPSR causes undef exep FIXME: maybe, perhaps this is fine idfk
-  PUSH {R7, R8}                                                //NOTE: prolly it's me testing this by doing BL 0x18
+  MRS R8, SPSR                  
+  PUSH {R7, R8}                                                
 
   MOV R0, SP
   BL __kernel_handler_irq       //k_h_i(*sp);
 
   POP {R7, R8}
-  MSR CPSR, R8                  //MSR SPSR, R8 causes undef exep
+  MSR SPSR, R8                
   MOV SP, R7
   LDMFD SP!, {R0-R12, PC}
 
