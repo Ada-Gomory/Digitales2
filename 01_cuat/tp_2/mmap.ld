@@ -24,7 +24,7 @@ _SYSTEM_STACK_INIT = 0x70090000;
 */
 MEMORY
 {
-    public_ram	: org = _PUBLIC_RAM_INIT, len = 0x1000
+    public_ram	: org = _PUBLIC_RAM_INIT, len = 0x2000  /*0x1000 se queda corto */
     public_stack : org = _PUBLIC_STACK_INIT, len = 0x1000
     user_stack : org = _USER_STACK_INIT, len =0x1000 
     fiq_stack : org = _FIQ_STACK_INIT, len =0x1000 
@@ -45,6 +45,7 @@ SECTIONS
         *(.reset_vector_code*)
         *(.handlers*) 
         *(.start*)
+        *(.kernel_text*)
         *(.text*) 
         } > public_ram
     

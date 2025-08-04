@@ -1,12 +1,16 @@
 #ifndef INCLUDE_H
 #define INCLUDE_H
 
-#include "gic.h"
-#include "timer.h"
-#include "uart.h"
-#include "console_utils.h"
-#include "low_level_cpu_access.h"
-#include "scheduler.h"
+#include "board/gic.h"
+#include "board/timer.h"
+#include "board/uart.h"
+
+#include "utils/console_utils.h"
+#include "utils/low_level_cpu_access.h"
+#include "utils/utils.h"
+
+#include "tasks/scheduler.h"
+#include "tasks/dummy.h"
 
 #include "define.h"
 

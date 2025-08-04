@@ -7,6 +7,8 @@
 #ifndef __CONSOLE_UTILS_H
 #define __CONSOLE_UTILS_H
 
+#include "../define.h"
+
 extern void Printf(const char *string,...);
 
 #endif //__CONSOLE_UTILS_H

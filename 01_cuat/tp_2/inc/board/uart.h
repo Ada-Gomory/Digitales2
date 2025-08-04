@@ -1,7 +1,7 @@
 #ifndef __UART_H
 #define __UART_H
 
-#include "define.h"
+#include "../define.h"
 
 /* The ARM PrimeCell UART (uart) is documented at
  *

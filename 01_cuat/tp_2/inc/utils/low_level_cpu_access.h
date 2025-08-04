@@ -16,8 +16,7 @@
 #ifndef __LOW_LEVE_ACCESS_H
 #define __LOW_LEVE_ACCESS_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "../define.h"
 
 extern void _irq_enable(void);
 extern void _irq_disable(void);

@@ -1,7 +1,7 @@
 #ifndef __GIC_LIB_H
 #define __GIC_LIB_H
 
-#include "define.h"
+#include "../define.h"
 
 #define GICC0_ADDR 0x1E000000
 #define GICD0_ADDR 0x1E001000

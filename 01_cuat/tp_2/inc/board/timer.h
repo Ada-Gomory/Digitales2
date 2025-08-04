@@ -1,7 +1,7 @@
 #ifndef __TIMER_H
 #define __TIMER_H
 
-#include "define.h"
+#include "../define.h"
 
 #define TIMER0_ADDR 0x10011000
 #define TIMER1_ADDR 0x10012000
