@@ -43,14 +43,6 @@ _start:
   table_copy:
     table_length: #_start - #table
 
-    //MOV r0, #0
-    //SUB r1, pc, #72 //#table
-    //MOV r2, #table_length
-    //ADD LR, pc, #4
-    //LDR PC, _memcpy
-    //_memcpy: .word memcpy       //NOTE while using the function I nade feels neater, its just 4 bytes shorter and 37 instructions slower
-    ///*
-
     SUB r1, pc, #8     
     MOV r0, #table_length       //r0 = table_length; both length and pos of last opeand; saves one whole entire reg
     loop_tablecpy:              //{
