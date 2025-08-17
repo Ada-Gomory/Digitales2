@@ -1,11 +1,17 @@
 
 #include "../../inc/include.h"
 
-void __kernel_handler_irq(void* sp);
+void* __kernel_handler_irq(void* sp);
 
 extern _gicc_t* const GICC0; 
+extern _timer_t* const TIMER0;
 
-__attribute__((section(".kernel_text"))) void __kernel_handler_irq(void* sp) {
+#ifdef debug
+  extern uint32_t i;
+  extern int8_t id;
+#endif
+
+__attribute__((section(".kernel_text"))) void* __kernel_handler_irq(void* sp) {
 
   uint32_t interrupt_id = (GICC0->IAR & 0x0000001FF);
   GICC0->EOIR = (interrupt_id & 0x0000001FF);
@@ -14,12 +20,14 @@ __attribute__((section(".kernel_text"))) void __kernel_handler_irq(void* sp) {
     Printf("Interrupcion %d atendida\n",interrupt_id);
   #endif
 
-  if (interrupt_id = 36) {
-    sp -= 4; //two pos down; scheduler doesnt modify SP_irq
-    scheduler(((context*) sp) - 1);  //sp -= sizeof(context);
+  if (interrupt_id == 36) {
+    TIMER0->Timer1IntClr = 0x01;
+    sp = scheduler(sp);                   //sp -= sizeof(context);
   }
 
-  4+4;
+  #ifdef debug
+    Printf("Task %d, tick %d\n",id, i);
+  #endif
   
-  return;
+  return sp;
 }

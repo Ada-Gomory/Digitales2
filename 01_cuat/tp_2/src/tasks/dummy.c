@@ -4,15 +4,15 @@
 int int_global1 = 0;
 int int_global2 = 0;
 
-void tarea1 (void ){
+void task1 (void ){
   int int_t1 = 0;
-  while (1){
+  while (1){ 
     int_t1++;
     int_global1++;
   }
 }
 
-void tarea2 (void ){
+void task2 (void ){
   int int_t2 = 0;
   while (1){
     int_t2--;
@@ -20,7 +20,7 @@ void tarea2 (void ){
   }
 }
 
-void tarea3 (void ){
+void task3 (void ){
   while (1){
     sizeof(int);
     int_global1--;
@@ -28,7 +28,8 @@ void tarea3 (void ){
   }
 }
 
-void tarea_fibonacci (void ){
+/*
+void task_fibonacci (void ){
   int a = 1;
   int b = 2;
 
@@ -40,20 +41,20 @@ void tarea_fibonacci (void ){
   }
 }
 
-void tarea_collatz (void ){
+void task_collatz (void ){
   int a = 100000000;
   
   while (a != 1){
     if (a && 0b1){
-      a = a >> 1;
+      a = 3 * a;
       //print a
     } else
-    a = 3 * a;
+      a = a >> 1;
     //print a
   }
 }
 
-void tarea_prime (void ){
+void task_prime (void ){
   int a = 5646154;
   int b = 0;
   int once = 0;
@@ -69,4 +70,4 @@ void tarea_prime (void ){
     b += once;
     once = 1;
   }
-}
+}  */

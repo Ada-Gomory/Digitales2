@@ -1,5 +1,5 @@
 CHAIN=arm-none-eabi
-CFLAGS=-std=gnu99 -Wno-unused -Wno-discarded-qualifiers -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c #-Ddebug
+CFLAGS=-std=gnu99 -Wno-unused -Wno-discarded-qualifiers -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c -Ddebug
 #CFLAGS=-std=gnu99 -Wno-unused -mfpu=neon -mhard-float -mcpu=cortex-a8 -DCPU_A8 -g -c
 AFLAGS=-mfpu=neon -g
 OBJ=obj/
@@ -14,7 +14,7 @@ $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
  #TODO: clean up ffs
-$(OBJ)bios.elf: $(OBJ)board/gic.o $(OBJ)board/timer.o $(OBJ)board/uart.o $(OBJ)irq/handlers.o $(OBJ)irq/kernel_handler_irq.o $(OBJ)kernel/board_init.o $(OBJ)kernel/reset_vector.o $(OBJ)kernel/startup.o $(OBJ)tasks/dummy.o $(OBJ)tasks/scheduler.o $(OBJ)utils/console_utils.o $(OBJ)utils/low_level_cpu_access.o $(OBJ)utils/utils.o 
+$(OBJ)bios.elf: $(OBJ)board/gic.o $(OBJ)board/timer.o $(OBJ)board/uart.o $(OBJ)irq/handlers.o $(OBJ)irq/kernel_handler_irq.o $(OBJ)kernel/board_init.o $(OBJ)kernel/reset_vector.o $(OBJ)kernel/startup.o $(OBJ)tasks/dummy.o $(OBJ)tasks/scheduler.o $(OBJ)utils/console_utils.o $(OBJ)utils/low_level_cpu_access.o
 	@echo "Linkeando..."
 	mkdir -p obj/board obj/irq obj/kernel obj/tasks obj/utils
 	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils
@@ -66,16 +66,6 @@ $(OBJ)utils/low_level_cpu_access.o: $(SRC)utils/low_level_cpu_access.s
 	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils	
 	@echo "Ensamblando utils/low_level_cpu_access.s ..."
 	$(CHAIN)-as $(AFLAGS) $(SRC)utils/low_level_cpu_access.s -o $(OBJ)utils/low_level_cpu_access.o -a > $(LST)utils/low_level_cpu_access.lst
-
-# Compilamos: utils/utils.s
-$(OBJ)utils/utils.o: $(SRC)utils/utils.s
-	@echo ""
-	mkdir -p bin
-	mkdir -p obj/board obj/irq obj/kernel obj/tasks obj/utils
-	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils	
-	@echo "Ensamblando utils/utils.s ..."
-	$(CHAIN)-as $(AFLAGS) $(SRC)utils/utils.s -o $(OBJ)utils/utils.o -a > $(LST)utils/utils.lst
-
 
 #
 # Compilado de codigo c

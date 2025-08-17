@@ -11,28 +11,27 @@ ENTRY(_start)
 */
 _PUBLIC_RAM_INIT = 0x70010000;
 _PUBLIC_STACK_INIT = 0x70020000;
-_USER_STACK_INIT = 0x70030000;
-_FIQ_STACK_INIT = 0x70040000;
-_IRQ_STACK_INIT = 0x70050000;
-_SVC_STACK_INIT = 0x70060000;
-_ABORT_STACK_INIT = 0x70070000;
-_UNDEF_STACK_INIT = 0x70080000;
-_SYSTEM_STACK_INIT = 0x70090000;
+
+SYSTEM_STACK_SIZE = 0x1000;
+USER_STACK_SIZE = 0x200;
+FIQ_STACK_SIZE = 0x200;
+IRQ_STACK_SIZE = 0x200;
+SVC_STACK_SIZE = 0x200;
+ABORT_STACK_SIZE = 0x200;
+UNDEF_STACK_SIZE = 0x200;
+
+TASK0_SIZE = 0x100;     /*idle */
+TASK1_SIZE = 0x100;
+TASK2_SIZE = 0x100;
+TASK3_SIZE = 0x100;
 
 /* 
     Definición del mapa de memoria
 */
 MEMORY
 {
-    public_ram	: org = _PUBLIC_RAM_INIT, len = 0x2000  /*0x1000 se queda corto */
-    public_stack : org = _PUBLIC_STACK_INIT, len = 0x1000
-    user_stack : org = _USER_STACK_INIT, len =0x1000 
-    fiq_stack : org = _FIQ_STACK_INIT, len =0x1000 
-    irq_stack : org = _IRQ_STACK_INIT, len =0x1000 
-    svc_stack : org = _SVC_STACK_INIT, len =0x1000 
-    abort_stack : org = _ABORT_STACK_INIT, len =0x1000 
-    undef_stack : org = _UNDEF_STACK_INIT, len =0x1000 
-    system_stack : org = _SYSTEM_STACK_INIT, len =0x1000 
+    public_ram	: org = _PUBLIC_RAM_INIT, len = 0x4000  /*0x1000 se queda corto */
+    public_stack : org = _PUBLIC_STACK_INIT, len = 0x4000
 }
 
 /* 
@@ -57,4 +56,86 @@ SECTIONS
         *(.bss*)
         __bss_end__ = .;
         } > public_ram
+
+
+    . = _PUBLIC_STACK_INIT;
+    .stack :  {
+      
+        . += IRQ_STACK_SIZE;
+        . = ALIGN(4);    
+        _IRQ_STACK_INIT = .;  
+
+        . += FIQ_STACK_SIZE;
+        . = ALIGN(4);    
+        _FIQ_STACK_INIT = .;  
+
+        . += SVC_STACK_SIZE;
+        . = ALIGN(4);   
+        _SVC_STACK_INIT = .;  
+
+        . += ABORT_STACK_SIZE;
+        . = ALIGN(4);    
+        _ABORT_STACK_INIT = .;  
+
+        . += UNDEF_STACK_SIZE;
+        . = ALIGN(4);    
+        _UNDEF_STACK_INIT = .;  
+        
+        . += SYSTEM_STACK_SIZE;
+        . = ALIGN(4);     
+        _SYSTEM_STACK_INIT = .;  
+
+
+
+        /*IRQ STACKS*/
+        . += TASK0_SIZE;
+        . = ALIGN(4);     
+        _TASK0_IRQ_STACK_INIT = .;    
+        . += TASK1_SIZE;
+        . = ALIGN(4);     
+        _TASK1_IRQ_STACK_INIT = .;     
+
+        . += TASK2_SIZE;
+        . = ALIGN(4);     
+        _TASK2_IRQ_STACK_INIT = .;       
+
+        . += TASK3_SIZE;
+        . = ALIGN(4);     
+        _TASK3_IRQ_STACK_INIT = .;   
+        
+        /*SYS STACKS*/
+        . += TASK0_SIZE;
+        . = ALIGN(4);     
+        _TASK0_SYS_STACK_INIT = .;    
+        . += TASK1_SIZE;
+        . = ALIGN(4);     
+        _TASK1_SYS_STACK_INIT = .;     
+
+        . += TASK2_SIZE;
+        . = ALIGN(4);     
+        _TASK2_SYS_STACK_INIT = .;       
+
+        . += TASK3_SIZE;
+        . = ALIGN(4);     
+        _TASK3_SYS_STACK_INIT = .;   
+
+
+        /*SVC STACKS*/
+        . += TASK0_SIZE;
+        . = ALIGN(4);     
+        _TASK0_SVC_STACK_INIT = .;    
+
+        . += TASK1_SIZE;
+        . = ALIGN(4);     
+        _TASK1_SVC_STACK_INIT = .;       
+
+        . += TASK2_SIZE;
+        . = ALIGN(4);     
+        _TASK2_SVC_STACK_INIT = .;      
+
+        . += TASK3_SIZE;
+        . = ALIGN(4);     
+        _TASK3_SVC_STACK_INIT = .;       
+          
+    } > public_stack    
 }

@@ -4,81 +4,80 @@
 #define TASK_SP_BASE 0x700a0000 
 #define TASK_SP_SPACING 0x1000
 
-const uint32_t tet_ticks = 30; 
-uint32_t idle_ticks = tet_ticks; 
-
-uint32_t ticks[TAREAS_MAX];
-context tcb[TAREAS_MAX];
+extern uint32_t _TASK0_IRQ_STACK_INIT, _TASK0_SVC_STACK_INIT, _TASK0_SYS_STACK_INIT;
+extern uint32_t _TASK1_IRQ_STACK_INIT, _TASK1_SVC_STACK_INIT, _TASK1_SYS_STACK_INIT;
+extern uint32_t _TASK2_IRQ_STACK_INIT, _TASK2_SVC_STACK_INIT, _TASK2_SYS_STACK_INIT;
+extern uint32_t _TASK3_IRQ_STACK_INIT, _TASK3_SVC_STACK_INIT, _TASK3_SYS_STACK_INIT;
+    
+uint32_t ticks[MAX_TASK];
+task_t tcb[MAX_TASK];
 uint8_t id = 0;
-uint8_t ids = 0;
+uint8_t ids = MAX_TASK;
 
-__attribute__((section(".kernel_text"))) void scheduler(context* sp) {
+#ifdef debug
+  uint32_t i = 1;
+#endif
 
-  static uint32_t i = 1;
+__attribute__((section(".kernel_text"))) void* scheduler(void* sp) {
+
+  #ifndef debug
+    static uint32_t i = 1;
+  #endif
 
   i--;
   if (i == 0){
-    if (id != 0)              //id 0 -> idle
-      *(tcb+id-1) = *(sp);
+    (tcb+id)->sp_irq = sp;
 
-    if (id == ids){
-      if (idle_ticks == 0)
-        id = 1;
-      else id = 0;
-    } else id++;
+    id++;
+    if (id==ids) id = 0;
 
-    if (id == 0) {
-      *(sp - 1)->pc == __idle;
-      i = idle_ticks;
-      return;
+    i = (tcb+id)->ticks;
+  }
+  return (tcb+id)->sp_irq;
+}
+
+__attribute__((section(".kernel_text"))) void __scheduler_init(void){
+  (tcb+0)->ticks = TICKS_IDLE;
+  (tcb+0)->ptr = __idle;
+  (tcb+0)->sp_irq = (uint32_t* )_TASK0_IRQ_STACK_INIT;
+
+  (tcb+1)->ticks = TICKS_1;
+  (tcb+1)->ptr = task1;
+  (tcb+1)->sp_irq = (uint32_t* )_TASK1_IRQ_STACK_INIT;
+
+  (tcb+2)->ticks = TICKS_2;
+  (tcb+2)->ptr = task2;
+  (tcb+2)->sp_irq = (uint32_t* )_TASK2_IRQ_STACK_INIT;
+
+  (tcb+3)->ticks = TICKS_3;
+  (tcb+3)->ptr = task3;
+  (tcb+3)->sp_irq = (uint32_t* )_TASK3_IRQ_STACK_INIT;
+
+  *((tcb+0)->sp_irq) = (uint32_t) __idle; (tcb+0)->sp_irq--;          
+  *((tcb+1)->sp_irq) = (uint32_t) task1;  (tcb+1)->sp_irq--; 
+  *((tcb+2)->sp_irq) = (uint32_t) task2;  (tcb+2)->sp_irq--; 
+  *((tcb+3)->sp_irq) = (uint32_t) task3;  (tcb+3)->sp_irq--; //lr
+
+  for (int tsk = 0; tsk < MAX_TASK; tsk++){
+    for (int i = 0; i < 12; i++){
+      *((tcb+tsk)->sp_irq) = 0; (tcb+tsk)->sp_irq--;     //r0-r12
     }
-
-    *(sp) = *(tcb+id-1);
-    i = *(ticks+id-1);
-
-  }
-  return;
-}
-
-__attribute__((section(".kernel_text"))) void scheduler_add(void (*ptr)(void), uint8_t tks) {
-  if (ids==TAREAS_MAX) return;          //TODO err handling
-  
-  for (int i = 0; i < 13; i++){
-    *(((tcb+ids)->r0a12) + i) = 0;
-  }
-  (tcb+ids)->sp = TASK_SP_BASE + (ids * TASK_SP_SPACING);     //FIXME: 
-  (tcb+ids)->spsr = 0x4000011f;                               //FIXME: esto u otro valor qcyo
-  (tcb+ids)->pc = ptr;
-  (tcb+ids)->lr = scheduler_remove;     //when ptr() ends with BX LR it gets removed from scheuler
-
-  ids++;
-  ticks[ids] = tks;
-  
-  if (tks > idle_ticks)
-    idle_ticks = 0;
-  else
-    idle_ticks -= tks;
-
-  return;
-
-}
-
-__attribute__((section(".kernel_text"))) void scheduler_remove() {
-  //por como esta armado el sch_add(), a esta funcion se entra si una task termina con BX LR, con el contexto de esa tarea cargado
-  if (ids == 0) return;              //TODO err handling
-
-  if (id != ids) {
-    *(ticks+id-1) = *(ticks+ids-1);
-    *(tcb+id-1) = *(tcb+ids-1);
+    *((tcb+tsk)->sp_irq) = 0x1f; (tcb+tsk)->sp_irq--;    //spsr     
   }
 
-  ids--;
+  *((tcb+0)->sp_irq) = _TASK0_SVC_STACK_INIT; (tcb+0)->sp_irq--;          
+  *((tcb+1)->sp_irq) = _TASK1_SVC_STACK_INIT;  (tcb+1)->sp_irq--; 
+  *((tcb+2)->sp_irq) = _TASK2_SVC_STACK_INIT;  (tcb+2)->sp_irq--; 
+  *((tcb+3)->sp_irq) = _TASK3_SVC_STACK_INIT;  (tcb+3)->sp_irq--; //sp_svc
 
-  int tks = 0;
-  for (int i = 0; i < ids; i++)
-    tks += *(ticks+i);
-  if (tks > tet_ticks)
-    idle_ticks = 0;
-  else
-    idle_ticks = tet_ticks - tks;
+  *((tcb+0)->sp_irq) = _TASK0_SYS_STACK_INIT; (tcb+0)->sp_irq--;          
+  *((tcb+1)->sp_irq) = _TASK1_SYS_STACK_INIT;  (tcb+1)->sp_irq--; 
+  *((tcb+2)->sp_irq) = _TASK2_SYS_STACK_INIT;  (tcb+2)->sp_irq--; 
+  *((tcb+3)->sp_irq) = _TASK3_SYS_STACK_INIT;  (tcb+3)->sp_irq--; //sp_sys
+
+  *((tcb+0)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3; (tcb+0)->sp_irq--;          
+  *((tcb+1)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+1)->sp_irq--; 
+  *((tcb+2)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+2)->sp_irq--; 
+  *((tcb+3)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+3)->sp_irq--; //sp_irq
+
 }

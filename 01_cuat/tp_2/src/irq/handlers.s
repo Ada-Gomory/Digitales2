@@ -23,31 +23,51 @@ data_abort:
   
 irq_handler:
   SUB LR, LR, #4
-  STMFD SP!, {R0-R12, LR}         //
-  MOV R8, SP
-  MRS R7, SPSR 
 
-  MSR cpsr_c, #(0xdf)             //        
-  MOV R5, LR
-  MOV R6, SP 
-  MSR cpsr_c, #(0xd2)             //Guardo LR_sys y SP_sys
+  STMFD SP!, {r0-r12, LR}         //
 
-  PUSH {R5-R8}                                                
+  MRS r9, SPSR   
+  
+  //TODO maybe add more SPs here
+  CPS         #(0x13)              
+  MOV r8, SP                      //Save SP_svc
+  CPS         #(0x1f)                     
+  MOV r7, SP                      //Save SP_sys
+  CPS         #(0x12)             
+  MOV r6, SP                      //Save SP_irq
 
-  MOV R0, SP   
+  PUSH {r6-r9}                                                
+
+  MOV r0, SP   
   BL __kernel_handler_irq         //k_h_i(*sp);
+  MOV SP, r0
 
-  POP {R5-R8}
+  POP {r6-r9}     
 
-  MSR cpsr_c, #(0xdf)             //Seteo LR_sys y SP_sys
-  MOV LR, R5
-  MOV SP, R6                      //FIXME: no se si es necesario guardar SP_irq ademas de SP_sys
-  MSR cpsr_c, #(0xd2)             //anyhow i still need LR_sys and LR_irq for task_LR and TASK_PC
+  MOV SP, r6                      //Get SP_irq                        
+  CPS         #(0x1f)                     
+  MOV SP, r7                      //Get SP_sys
+  CPS         #(0x13)                    
+  MOV SP, r6                      //Get SP_svc
+  CPS         #(0x12)             
+            
+  MSR SPSR, r9   
 
-  MSR SPSR, R7                
-  MOV SP, R8
-  MSR cpsr_c, #(0x1f)             //Enable irqs; exist irq mode
-  LDMFD SP!, {R0-R12, PC}
+  CPSIE if
+  LDMFD SP!, {r0-r12, PC}^
+
+/* Stack pointer structure on kernel_handler_irq call
+        <- *sp (in r0)
+  sp_irq
+  sp_sys
+  sp_svc
+  spsr
+  r0
+  ...
+  r12
+  lr
+*/
+
 
 fiq_handler:
   B __idle

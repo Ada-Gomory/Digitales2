@@ -14,11 +14,9 @@
 #define reserved_bits(x,y,z) uint8_t reserved##x[ z - y + 1 ]; 
 
 typedef struct {
-  uint32_t r0a12[13];
-  void (*pc)(void);      //LR_irq
-  void (*lr)(void);      //LR_sys
-  uint32_t sp;      //SP_sys
-  uint32_t spsr;    
-} context;
+  uint32_t ticks;
+  void (*ptr)(void );
+  uint32_t* sp_irq;
+} task_t;
 
 #endif

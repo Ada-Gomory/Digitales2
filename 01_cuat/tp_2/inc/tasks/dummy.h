@@ -3,12 +3,14 @@
 
 #include "../define.h"
 
-void tarea1 (void );
-void tarea2 (void );
-void tarea3 (void );
+void task1 (void );
+void task2 (void );
+void task3 (void );
 
-void tarea_fibonacci (void );
-void tarea_collatz (void );
-void tarea_prime (void );
+/*
+void task_fibonacci (void );
+void task_collatz (void );
+void task_prime (void );
+*/
 
 #endif
