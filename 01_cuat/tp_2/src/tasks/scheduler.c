@@ -53,31 +53,31 @@ __attribute__((section(".kernel_text"))) void __scheduler_init(void){
   (tcb+3)->ptr = task3;
   (tcb+3)->sp_irq = (uint32_t* )_TASK3_IRQ_STACK_INIT;
 
-  *((tcb+0)->sp_irq) = (uint32_t) __idle; (tcb+0)->sp_irq--;          
-  *((tcb+1)->sp_irq) = (uint32_t) task1;  (tcb+1)->sp_irq--; 
-  *((tcb+2)->sp_irq) = (uint32_t) task2;  (tcb+2)->sp_irq--; 
-  *((tcb+3)->sp_irq) = (uint32_t) task3;  (tcb+3)->sp_irq--; //lr
+  (tcb+0)->sp_irq--;  *((tcb+0)->sp_irq) = (uint32_t) __idle;           
+  (tcb+1)->sp_irq--;  *((tcb+1)->sp_irq) = (uint32_t) task1;   
+  (tcb+2)->sp_irq--;  *((tcb+2)->sp_irq) = (uint32_t) task2;   
+  (tcb+3)->sp_irq--;  *((tcb+3)->sp_irq) = (uint32_t) task3;   //lr
 
   for (int tsk = 0; tsk < MAX_TASK; tsk++){
-    for (int i = 0; i < 12; i++){
-      *((tcb+tsk)->sp_irq) = 0; (tcb+tsk)->sp_irq--;     //r0-r12
+    for (int i = 0; i < 13; i++){
+      (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = 0;     //r0-r12
     }
-    *((tcb+tsk)->sp_irq) = 0x1f; (tcb+tsk)->sp_irq--;    //spsr     
+    (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = 0x1f;     //spsr     
   }
 
-  *((tcb+0)->sp_irq) = _TASK0_SVC_STACK_INIT; (tcb+0)->sp_irq--;          
-  *((tcb+1)->sp_irq) = _TASK1_SVC_STACK_INIT;  (tcb+1)->sp_irq--; 
-  *((tcb+2)->sp_irq) = _TASK2_SVC_STACK_INIT;  (tcb+2)->sp_irq--; 
-  *((tcb+3)->sp_irq) = _TASK3_SVC_STACK_INIT;  (tcb+3)->sp_irq--; //sp_svc
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = _TASK0_SVC_STACK_INIT;          
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = _TASK1_SVC_STACK_INIT;  
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = _TASK2_SVC_STACK_INIT;  
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = _TASK3_SVC_STACK_INIT;  //sp_svc
 
-  *((tcb+0)->sp_irq) = _TASK0_SYS_STACK_INIT; (tcb+0)->sp_irq--;          
-  *((tcb+1)->sp_irq) = _TASK1_SYS_STACK_INIT;  (tcb+1)->sp_irq--; 
-  *((tcb+2)->sp_irq) = _TASK2_SYS_STACK_INIT;  (tcb+2)->sp_irq--; 
-  *((tcb+3)->sp_irq) = _TASK3_SYS_STACK_INIT;  (tcb+3)->sp_irq--; //sp_sys
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = _TASK0_SYS_STACK_INIT;           
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = _TASK1_SYS_STACK_INIT;   
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = _TASK2_SYS_STACK_INIT;   
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = _TASK3_SYS_STACK_INIT;   //sp_sys
 
-  *((tcb+0)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3; (tcb+0)->sp_irq--;          
-  *((tcb+1)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+1)->sp_irq--; 
-  *((tcb+2)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+2)->sp_irq--; 
-  *((tcb+3)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+3;  (tcb+3)->sp_irq--; //sp_irq
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+4;          
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = (uint32_t)(tcb+1)->sp_irq+4;  
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = (uint32_t)(tcb+2)->sp_irq+4;  
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = (uint32_t)(tcb+3)->sp_irq+4;  //sp_irq
 
 }
