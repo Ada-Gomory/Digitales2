@@ -9,6 +9,7 @@ void task1 (void ){
   while (1){ 
     int_t1++;
     int_global1++;
+    Printf("tarea1\n");
   }
 }
 
@@ -17,6 +18,7 @@ void task2 (void ){
   while (1){
     int_t2--;
     int_global2--;
+    Printf("\ttarea2\n");
   }
 }
 
@@ -24,50 +26,7 @@ void task3 (void ){
   while (1){
     sizeof(int);
     int_global1--;
-    int_global2--;
+    int_global2++;
+    Printf("\t\ttarea3\n");
   }
 }
-
-/*
-void task_fibonacci (void ){
-  int a = 1;
-  int b = 2;
-
-  while (a < 1000000){
-    a += b;
-    // print a
-    b += a;
-    //print b
-  }
-}
-
-void task_collatz (void ){
-  int a = 100000000;
-  
-  while (a != 1){
-    if (a && 0b1){
-      a = 3 * a;
-      //print a
-    } else
-      a = a >> 1;
-    //print a
-  }
-}
-
-void task_prime (void ){
-  int a = 5646154;
-  int b = 0;
-  int once = 0;
-  int fac = 2;
-  
-  while (a != 1){
-    b = div(a, fac);
-    if ((b*fac) == a){
-      a = b;
-      //print a
-    }
-    b++;
-    b += once;
-    once = 1;
-  }
-}  */

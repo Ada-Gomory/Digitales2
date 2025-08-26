@@ -57,8 +57,6 @@ SECTIONS
         __bss_end__ = .;
         } > public_ram
 
-
-    . = _PUBLIC_STACK_INIT;
     .stack :  {
       
         . += IRQ_STACK_SIZE;

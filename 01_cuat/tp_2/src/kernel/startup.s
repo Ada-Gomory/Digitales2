@@ -72,11 +72,12 @@ _start:
     MSR cpsr_c, #(0x1f|0x80|0x40)   //Sys; 0xdf
     LDR SP,=_SYSTEM_STACK_INIT
 
-    MSR cpsr_c, #(0x1f)             //Enable irqs
-  
   board_init:
     BL __board_init
                           
+  CPS         #(0x13)
+  CPSIE if
+  
   B __idle
 .end
 

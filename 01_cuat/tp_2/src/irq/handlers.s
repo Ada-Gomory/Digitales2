@@ -51,10 +51,9 @@ irq_handler:
   MOV SP, r8                      //Get SP_svc
   CPS         #(0x12)             
             
-  MSR SPSR, r9   
-
-  CPSIE if
-  LDMFD SP!, {r0-r12, PC}^
+  MSR SPSR, r9
+  
+  LDMFD SP!, {r0-r12, PC}^        //returns procesor in sys mode
 
 /* Stack pointer structure on kernel_handler_irq call
   sp_irq    <- *sp (in r0)
