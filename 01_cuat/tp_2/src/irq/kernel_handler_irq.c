@@ -7,7 +7,7 @@ extern _gicc_t* const GICC0;
 extern _timer_t* const TIMER0;
 
 #ifdef debug
-  extern uint32_t i;
+  extern uint32_t iter;
   extern int8_t id;
 #endif
 
@@ -26,7 +26,7 @@ __attribute__((section(".kernel_text"))) void* __kernel_handler_irq(void* sp) {
   }
 
   #ifdef debug
-    Printf("Task %d, tick %d\n",id, i);
+    Printf("Task %d, tick %d\n",id, iter);
   #endif
   
   return sp;

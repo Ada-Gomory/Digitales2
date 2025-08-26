@@ -36,19 +36,19 @@ irq_handler:
   CPS         #(0x12)             
   MOV r6, SP                      //Save SP_irq
 
-  PUSH {r6-r9}                                                
+  STMFD SP!, {r6-r9}                                                
 
   MOV r0, SP   
   BL __kernel_handler_irq         //k_h_i(*sp);
   MOV SP, r0
 
-  POP {r6-r9}     
+  LDMFD SP!, {r6-r9}     
 
   MOV SP, r6                      //Get SP_irq                        
   CPS         #(0x1f)                     
   MOV SP, r7                      //Get SP_sys
   CPS         #(0x13)                    
-  MOV SP, r6                      //Get SP_svc
+  MOV SP, r8                      //Get SP_svc
   CPS         #(0x12)             
             
   MSR SPSR, r9   
@@ -57,12 +57,11 @@ irq_handler:
   LDMFD SP!, {r0-r12, PC}^
 
 /* Stack pointer structure on kernel_handler_irq call
-        <- *sp (in r0)
-  sp_irq
+  sp_irq    <- *sp (in r0)
   sp_sys
   sp_svc
   spsr
-  r0
+  r0        <- sp_irq que esta en el stack apunta aca
   ...
   r12
   lr

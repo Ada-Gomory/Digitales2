@@ -31,7 +31,7 @@ TASK3_SIZE = 0x100;
 MEMORY
 {
     public_ram	: org = _PUBLIC_RAM_INIT, len = 0x4000  /*0x1000 se queda corto */
-    public_stack : org = _PUBLIC_STACK_INIT, len = 0x4000
+    public_stack : org = _PUBLIC_STACK_INIT, len = 0x6000
 }
 
 /* 
@@ -90,7 +90,8 @@ SECTIONS
         /*IRQ STACKS*/
         . += TASK0_SIZE;
         . = ALIGN(4);     
-        _TASK0_IRQ_STACK_INIT = .;    
+        _TASK0_IRQ_STACK_INIT = .;   
+
         . += TASK1_SIZE;
         . = ALIGN(4);     
         _TASK1_IRQ_STACK_INIT = .;     
@@ -106,7 +107,8 @@ SECTIONS
         /*SYS STACKS*/
         . += TASK0_SIZE;
         . = ALIGN(4);     
-        _TASK0_SYS_STACK_INIT = .;    
+        _TASK0_SYS_STACK_INIT = .;   
+
         . += TASK1_SIZE;
         . = ALIGN(4);     
         _TASK1_SYS_STACK_INIT = .;     

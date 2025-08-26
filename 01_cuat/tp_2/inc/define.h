@@ -15,9 +15,7 @@
 
 typedef struct {
   uint32_t ticks;
-  void (*ptr)(void );
   uint32_t* sp_irq;
-  uint32_t* sp_svc;
 } task_t;
 
 #endif
