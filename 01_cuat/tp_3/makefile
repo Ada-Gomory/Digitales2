@@ -14,7 +14,7 @@ $(BIN)bios.bin: $(OBJ)bios.elf
 	$(CHAIN)-objcopy -O binary $< $@
 
  #TODO: clean up ffs
-$(OBJ)bios.elf: $(OBJ)board/gic.o $(OBJ)board/timer.o $(OBJ)board/uart.o $(OBJ)irq/handlers.o $(OBJ)irq/kernel_handler_irq.o $(OBJ)kernel/board_init.o $(OBJ)kernel/reset_vector.o $(OBJ)kernel/startup.o $(OBJ)tasks/dummy.o $(OBJ)tasks/scheduler.o $(OBJ)utils/console_utils.o $(OBJ)utils/low_level_cpu_access.o $(OBJ)utils/utils.o 
+$(OBJ)bios.elf: $(OBJ)board/gic.o $(OBJ)board/timer.o $(OBJ)board/uart.o $(OBJ)irq/handlers.o $(OBJ)irq/kernel_handlers.o $(OBJ)kernel/board_init.o $(OBJ)kernel/reset_vector.o $(OBJ)kernel/startup.o $(OBJ)tasks/tasks.o $(OBJ)tasks/scheduler.o $(OBJ)utils/console_utils.o $(OBJ)utils/low_level_cpu_access.o $(OBJ)utils/utils.o 
 	@echo "Linkeando..."
 	mkdir -p obj/board obj/irq obj/kernel obj/tasks obj/utils
 	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils
@@ -126,14 +126,14 @@ $(OBJ)utils/console_utils.o : $(SRC)utils/console_utils.c
 	@echo "Compilando utils/console_utils.c ..."
 	$(CHAIN)-gcc $(CFLAGS) $(SRC)utils/console_utils.c -o $(OBJ)utils/console_utils.o -Wa,-a > $(LST)utils/console_utils.lst
 
-# Compilamos: irq/kernel_handler_irq.o
-$(OBJ)irq/kernel_handler_irq.o : $(SRC)irq/kernel_handler_irq.c
+# Compilamos: irq/kernel_handlers.o
+$(OBJ)irq/kernel_handlers.o : $(SRC)irq/kernel_handlers.c
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj/board obj/irq obj/kernel obj/tasks obj/utils
 	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils	
-	@echo "Compilando irq/kernel_handler_irq.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)irq/kernel_handler_irq.c -o $(OBJ)irq/kernel_handler_irq.o  -Wa,-a > $(LST)irq/kernel_handler_irq.lst
+	@echo "Compilando irq/kernel_handlers.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)irq/kernel_handlers.c -o $(OBJ)irq/kernel_handlers.o  -Wa,-a > $(LST)irq/kernel_handlers.lst
 
 # Compilamos: tasks/scheduler.o
 $(OBJ)tasks/scheduler.o : $(SRC)tasks/scheduler.c
@@ -144,14 +144,14 @@ $(OBJ)tasks/scheduler.o : $(SRC)tasks/scheduler.c
 	@echo "Compilando tasks/scheduler.c ..."
 	$(CHAIN)-gcc $(CFLAGS) $(SRC)tasks/scheduler.c -o $(OBJ)tasks/scheduler.o  -Wa,-a > $(LST)tasks/scheduler.lst
 
-# Compilamos: tasks/dummy.o
-$(OBJ)tasks/dummy.o : $(SRC)tasks/dummy.c
+# Compilamos: tasks/tasks.o
+$(OBJ)tasks/tasks.o : $(SRC)tasks/tasks.c
 	@echo ""
 	mkdir -p bin
 	mkdir -p obj/board obj/irq obj/kernel obj/tasks obj/utils
 	mkdir -p lst/board lst/irq lst/kernel lst/tasks lst/utils	
-	@echo "Compilando tasks/dummy.c ..."
-	$(CHAIN)-gcc $(CFLAGS) $(SRC)tasks/dummy.c -o $(OBJ)tasks/dummy.o  -Wa,-a > $(LST)tasks/dummy.lst
+	@echo "Compilando tasks/tasks.c ..."
+	$(CHAIN)-gcc $(CFLAGS) $(SRC)tasks/tasks.c -o $(OBJ)tasks/tasks.o  -Wa,-a > $(LST)tasks/tasks.lst
 
 
 clean:

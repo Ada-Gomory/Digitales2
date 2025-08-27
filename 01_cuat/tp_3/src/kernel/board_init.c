@@ -15,7 +15,7 @@
   extern uint32_t _SYSTEM_STACK_INIT;  
 #endif
 
-void __board_init(void );
+void __board_init(void ); //TODO move to appt .h
 
 __attribute__((section(".kernel_text"))) void __board_init() {
   __uart_init(0);
@@ -38,15 +38,15 @@ __attribute__((section(".kernel_text"))) void __board_init() {
     __scheduler_init();
 }
 
-__attribute__((section(".kernel_text"))) void __idle() {
+__attribute__((section(".kernel_text"))) void __idle() { //TODO move to oppt .c
   idle:
     HALT_CPU_m;
   goto idle;     
 }
 
-
+//TODO move to oppt .c
 __attribute__((section(".kernel_text"))) void printf_usr(char* s, int d) { //TODO variable args for printf
-  
-  asm("SVC #0");
+  Printf(s,d);
+  //asm("SVC #0");
 
 }

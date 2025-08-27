@@ -13,7 +13,37 @@ undef_handler:
   B __idle
   
 softirq_hanlder:
-  B __idle
+  
+  SUB LR, LR, #4
+
+  STMFD SP!, {r0-r12, LR}         //
+
+  MRS r9, SPSR   
+  MOV r8, SP                      
+
+  STMFD SP!, {r8-r9}                                                
+
+  //didn't touch r0-r3, still contain printf_usr parameters
+  BL __kernel_handler_swi         //k_h_s(*sp);
+
+  LDMFD SP!, {r8-r9}     
+
+  MOV SP, r8                      //Get SP_irq       
+  MSR SPSR, r9
+  
+  LDMFD SP!, {r0-r12, PC}^        //returns procesor in wtv
+
+/* Stack pointer structure on kernel_handler_irq call
+  sp_irq    <- *sp (in r0)
+  sp_sys
+  sp_svc
+  spsr
+  r0        <- sp_irq que esta en el stack apunta aca
+  ...
+  r12
+  lr
+*/
+
 
 pref_abort:
   B __idle

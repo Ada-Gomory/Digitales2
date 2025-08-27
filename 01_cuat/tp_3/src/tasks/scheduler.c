@@ -52,9 +52,9 @@ __attribute__((section(".kernel_text"))) void __scheduler_init(void){
   (tcb+3)->sp_irq = (uint32_t* )&_TASK3_IRQ_STACK_INIT;
 
   (tcb+0)->sp_irq--;  *((tcb+0)->sp_irq) = (uint32_t) __idle;           
-  (tcb+1)->sp_irq--;  *((tcb+1)->sp_irq) = (uint32_t) task1;   
-  (tcb+2)->sp_irq--;  *((tcb+2)->sp_irq) = (uint32_t) task2;   
-  (tcb+3)->sp_irq--;  *((tcb+3)->sp_irq) = (uint32_t) task3;   //lr
+  (tcb+1)->sp_irq--;  *((tcb+1)->sp_irq) = (uint32_t) task_fibonacci;   
+  (tcb+2)->sp_irq--;  *((tcb+2)->sp_irq) = (uint32_t) task_collatz;   
+  (tcb+3)->sp_irq--;  *((tcb+3)->sp_irq) = (uint32_t) task_prime;   //lr
 
   for (int tsk = 0; tsk < MAX_TASK; tsk++){
     for (int i = 0; i < 13; i++){

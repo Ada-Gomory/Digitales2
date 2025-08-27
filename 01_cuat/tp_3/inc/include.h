@@ -10,7 +10,7 @@
 #include "utils/utils.h"
 
 #include "tasks/scheduler.h"
-#include "tasks/dummy.h"
+#include "tasks/tasks.h"
 
 #include "define.h"
 
