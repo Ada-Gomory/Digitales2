@@ -4,7 +4,7 @@
 int int_global1 = 0;
 int int_global2 = 0;
 
-void task1 (void ){
+__attribute__((section(".kernel_text"))) void task1 (void ){
   int int_t1 = 0;
   while (1){ 
     int_t1++;
@@ -13,7 +13,7 @@ void task1 (void ){
   }
 }
 
-void task2 (void ){
+__attribute__((section(".kernel_text"))) void task2 (void ){
   int int_t2 = 0;
   while (1){
     int_t2--;
@@ -22,7 +22,7 @@ void task2 (void ){
   }
 }
 
-void task3 (void ){
+__attribute__((section(".kernel_text"))) void task3 (void ){
   while (1){
     sizeof(int);
     int_global1--;
