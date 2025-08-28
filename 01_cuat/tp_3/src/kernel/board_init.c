@@ -46,7 +46,7 @@ __attribute__((section(".kernel_text"))) void __idle() { //TODO move to oppt .c
 
 //TODO move to oppt .c
 __attribute__((section(".kernel_text"))) void printf_usr(char* s, int d) { //TODO variable args for printf
-  Printf(s,d);
-  //asm("SVC #0");
+  //Printf(s,d);
+  asm("SVC #0");
 
 }

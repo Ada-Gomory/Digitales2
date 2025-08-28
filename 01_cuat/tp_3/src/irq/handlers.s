@@ -16,33 +16,21 @@ softirq_hanlder:
   
   SUB LR, LR, #4
 
-  STMFD SP!, {r0-r12, LR}         //
+  STMFD SP!, {r0-r12, LR}   
 
-  MRS r9, SPSR   
-  MOV r8, SP                      
+  MRS r9, SPSR
+  //detect svc call nro and put it on r12                 
 
-  STMFD SP!, {r8-r9}                                                
+  STMFD SP!, {r9}                                                
 
   //didn't touch r0-r3, still contain printf_usr parameters
   BL __kernel_handler_swi         //k_h_s(*sp);
 
-  LDMFD SP!, {r8-r9}     
-
-  MOV SP, r8                      //Get SP_irq       
+  LDMFD SP!, {r9}     
+    
   MSR SPSR, r9
   
   LDMFD SP!, {r0-r12, PC}^        //returns procesor in wtv
-
-/* Stack pointer structure on kernel_handler_irq call
-  sp_irq    <- *sp (in r0)
-  sp_sys
-  sp_svc
-  spsr
-  r0        <- sp_irq que esta en el stack apunta aca
-  ...
-  r12
-  lr
-*/
 
 
 pref_abort:

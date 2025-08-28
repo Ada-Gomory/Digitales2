@@ -1,6 +1,26 @@
 
 #include "../../inc/include.h"
 
+/*
+__attribute__((section(".kernel_text"))) void task_fibonacci (void ){
+  while (1) {
+    printf_usr("Fibonacci: %d\n", 1);
+  }
+}
+
+__attribute__((section(".kernel_text"))) void task_collatz (void ){
+  while (1){
+    printf_usr("\t\t\tCollatz: %d\n", 2);
+  }
+}
+
+__attribute__((section(".kernel_text"))) void task_prime (void ){
+  while(1){
+    printf_usr("\t\t\t\t\t\tPrime Factor: %d\n",3);
+    int a = div(823,3123897);
+  }
+} //*/
+
 __attribute__((section(".kernel_text"))) void task_fibonacci (void ){
     uint32_t a;
     uint32_t b;
@@ -14,39 +34,57 @@ __attribute__((section(".kernel_text"))) void task_fibonacci (void ){
       a += b;
       printf_usr("Fibonacci: %d\n", a);
       b += a;
-      printf_usr("Fibonacci: %d\n", b);
+      Printf("Fibonacci: %d\n", b);
     }
   }
 }
 
 __attribute__((section(".kernel_text"))) void task_collatz (void ){
-  int a = 100000000;
-  
-  while (a != 1){
-    if (a && 0b1){
-      a = 3 * a;
-      //print a
-    } else
-      a = a >> 1;
-    //print a
+    uint32_t a;
+  while (1){
+    a = 7000000;
+    printf_usr("\t\t\tCollatz: %d\n", a);
+
+    while (a != 1){
+      if (a & 0b1){
+        a = 3*a;
+        a += 1;
+        a = a >> 1;
+      } else
+        a = a >> 1;
+      printf_usr("\t\t\tCollatz: %d\n", a);
+    }
   }
 }
 
 __attribute__((section(".kernel_text"))) void task_prime (void ){
-  int a = 5646154;
-  int b = 0;
-  int once = 0;
-  int fac = 2;
+  //while(1){
+  //  int a;
+  //  a = div(82331241,313);
+  //  printf_usr("\t\t\t\t\t\tPrime Factor: %d\n",a);
+
   
-  while (a != 1){
-    b = div(a, fac);
-    if ((b*fac) == a){ //FIXME
-      a = b;
-      //print a
-    } else {
-      fac++;
-      fac += once;
-      once = 1;
+    uint32_t a;
+    uint32_t b;
+    uint32_t fac;
+  while(1){
+    a = 5646154;
+    b = 0;
+    fac = 3;
+    
+    while(1) {
+      if (!(a & 0b1)) a = a >> 1;        //if even divide by 2
+      else break;                        //else continue
+      printf_usr("\t\t\t\t\t\tPrime Factor: %d\n",2);
     }
+    while (a != 1){
+      b = div(a, fac);
+      if ((b*fac) == a) {
+        a = b;     //if is divisible by fac divide a by fac
+        printf_usr("\t\t\t\t\t\tPrime Factor: %d\n",fac);
+      }
+      else fac += 2;              //increase factor; tests all odd divisiors but it's slower rather than strictly wrong; all negative
+    }//*/
+
   }
-} 
+} //*/
