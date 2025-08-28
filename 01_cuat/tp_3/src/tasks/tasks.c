@@ -1,19 +1,20 @@
 
 #include "../../inc/include.h"
 
-int int_global1 = 0;
-int int_global2 = 0;
-
 __attribute__((section(".kernel_text"))) void task_fibonacci (void ){
+    uint32_t a;
+    uint32_t b;
   while (1) {
-    int a = 1;
-    int b = 2;
+    a = 1;
+    b = 1;
+    printf_usr("Fibonacci: %d\n", a);
+    printf_usr("Fibonacci: %d\n", b);
 
     while (a < 1000000){
       a += b;
-      // print a
+      printf_usr("Fibonacci: %d\n", a);
       b += a;
-      //print b
+      printf_usr("Fibonacci: %d\n", b);
     }
   }
 }
