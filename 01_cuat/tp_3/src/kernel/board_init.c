@@ -38,15 +38,25 @@ __attribute__((section(".kernel_text"))) void __board_init() {
     __scheduler_init();
 }
 
-__attribute__((section(".kernel_text"))) void __idle() { //TODO move to oppt .c
+__attribute__((section(".kernel_text"))) void __idle() { //TODO move to appt .c
   idle:
     HALT_CPU_m;
   goto idle;     
 }
 
 //TODO move to oppt .c
-__attribute__((section(".kernel_text"))) void printf_usr(char* s, int d) { //TODO variable args for printf
-  //Printf(s,d);
-  asm("SVC #0");
+__attribute__((section(".kernel_text"))) void printf_usr(char* s, uint32_t d) { //TODO variable args for printf
+  //Printf(s,d); return;
+  //ensure the vars in the register I want (gcc should do this but ⁻\_('_')_/⁻ )
+  register char* r0 asm("r0") = s;
+  register uint32_t r1 asm("r1") = d;  
+  
+  asm volatile(
+    "SVC #2"
+    ::
+    //"r"(data_r1),"r"(data_r2)/*in*/
+    "r"(r0),"r"(r1)/*in*/
+  );
 
+  return;
 }

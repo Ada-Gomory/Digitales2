@@ -51,6 +51,19 @@ __attribute__((section(".kernel_text"))) void __scheduler_init(void){
   (tcb+3)->ticks = TICKS_3;
   (tcb+3)->sp_irq = (uint32_t* )&_TASK3_IRQ_STACK_INIT;
 
+  /* Stack pointer structure on kernel_handler_irq call
+    sp_irq    <- *sp (in r0)
+    lr_sys
+    sp_sys
+    lr_svc
+    sp_svc
+    spsr
+    r0        <- sp_irq que esta en el stack apunta aca
+    ...
+    r12
+    lr
+  */
+
   (tcb+0)->sp_irq--;  *((tcb+0)->sp_irq) = (uint32_t) __idle;           
   (tcb+1)->sp_irq--;  *((tcb+1)->sp_irq) = (uint32_t) task_fibonacci;   
   (tcb+2)->sp_irq--;  *((tcb+2)->sp_irq) = (uint32_t) task_collatz;   
@@ -58,29 +71,36 @@ __attribute__((section(".kernel_text"))) void __scheduler_init(void){
 
   for (int tsk = 0; tsk < MAX_TASK; tsk++){
     for (int i = 0; i < 13; i++){
-      (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = i;     //r0-r12
+      (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = 0;     //r12-r0
     }
-    (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = 0x13;     //spsr     
-  }
+    (tcb+tsk)->sp_irq--; *((tcb+tsk)->sp_irq) = 0x1f;     //spsr in initial mode, start in sys     
+  }                                                       //TODO: pass as arg; use defines
 
   (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = &_TASK0_SVC_STACK_INIT;          
   (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = &_TASK1_SVC_STACK_INIT;  
   (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = &_TASK2_SVC_STACK_INIT;  
   (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = &_TASK3_SVC_STACK_INIT;  //sp_svc
 
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = 0x00000000;          
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = 0x00000000;  
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = 0x00000000;  //TODO: link to scheduler_purge
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = 0x00000000;  //lr_svc
+
   (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = &_TASK0_SYS_STACK_INIT;           
   (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = &_TASK1_SYS_STACK_INIT;   
   (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = &_TASK2_SYS_STACK_INIT;   
   (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = &_TASK3_SYS_STACK_INIT;   //sp_sys
 
-  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = (uint32_t)((tcb+0)->sp_irq)+16;          
-  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = (uint32_t)((tcb+1)->sp_irq)+16;  
-  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = (uint32_t)((tcb+2)->sp_irq)+16;  
-  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = (uint32_t)((tcb+3)->sp_irq)+16;  //sp_irq
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = 0x00000000;          
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = 0x00000000;  
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = 0x00000000;  //TODO: link to scheduler_purge
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = 0x00000000;  //lr_sys
 
-  //(tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = (uint32_t)(tcb+0)->sp_irq+4;          
-  //(tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = (uint32_t)(tcb+1)->sp_irq+4;  
-  //(tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = (uint32_t)(tcb+2)->sp_irq+4;  
-  //(tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = (uint32_t)(tcb+3)->sp_irq+4;  //sp_irq
-
+  (tcb+0)->sp_irq--; *((tcb+0)->sp_irq) = (uint32_t)((tcb+0)->sp_irq)+24;          
+  (tcb+1)->sp_irq--; *((tcb+1)->sp_irq) = (uint32_t)((tcb+1)->sp_irq)+24;  
+  (tcb+2)->sp_irq--; *((tcb+2)->sp_irq) = (uint32_t)((tcb+2)->sp_irq)+24;  
+  (tcb+3)->sp_irq--; *((tcb+3)->sp_irq) = (uint32_t)((tcb+3)->sp_irq)+24;  //sp_irq
 }
+
+//TODO scheduler_add(...)
+//TODO scheduler_purge(...)

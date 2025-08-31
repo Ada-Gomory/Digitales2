@@ -13,24 +13,37 @@ undef_handler:
   B __idle
   
 softirq_hanlder:
-  
-  SUB LR, LR, #4
 
   STMFD SP!, {r0-r12, LR}   
-
   MRS r9, SPSR
-  //detect svc call nro and put it on r12                 
+  MOV r8, SP                      //Save SP_svc
 
-  STMFD SP!, {r9}                                                
+  STMFD SP!, {r8-r9}              
 
-  //didn't touch r0-r3, still contain printf_usr parameters
-  BL __kernel_handler_swi         //k_h_s(*sp);
+  //detect svc call nro and put it on r1
+  LDR r1, [LR, #-4]                           
+  BIC r1, r1, #0xFF000000
 
-  LDMFD SP!, {r9}     
-    
+  MOV r0, SP
+  BL __kernel_handler_swi         //k_h_s(*sp, code);
+  MOV SP, r0
+
+  LDMFD SP!, {r8-r9}     
+
+  MOV SP, r8  
   MSR SPSR, r9
-  
+
   LDMFD SP!, {r0-r12, PC}^        //returns procesor in wtv
+
+
+/* Stack pointer structure on kernel_handler_irq call
+  sp_svc    <- *sp (in r0)
+  spsr
+  r0        <- sp_svc que esta en el stack apunta aca
+  ...
+  r12
+  lr
+*/
 
 
 pref_abort:
@@ -47,35 +60,44 @@ irq_handler:
   MRS r9, SPSR   
   
   //TODO maybe add more SPs here
-  CPS         #(0x13)              
+  CPS         #(0x13)             //Go to svc
   MOV r8, SP                      //Save SP_svc
-  CPS         #(0x1f)                     
-  MOV r7, SP                      //Save SP_sys
-  CPS         #(0x12)             
-  MOV r6, SP                      //Save SP_irq
+  MOV r7, LR                      //Save LR_svc
 
-  STMFD SP!, {r6-r9}                                                
+  CPS         #(0x1f)             //Go to sys                
+  MOV r6, SP                      //Save SP_sys
+  MOV r5, LR                      //Save LR_sys
+
+  CPS         #(0x12)             //Back to irq             
+  MOV r4, SP                      //Save SP_irq
+
+  STMFD SP!, {r4-r9}                                                
 
   MOV r0, SP   
   BL __kernel_handler_irq         //k_h_i(*sp);
   MOV SP, r0
 
-  LDMFD SP!, {r6-r9}     
+  LDMFD SP!, {r4-r9}     
 
-  MOV SP, r6                      //Get SP_irq                        
-  CPS         #(0x1f)                     
-  MOV SP, r7                      //Get SP_sys
-  CPS         #(0x13)                    
+  MOV SP, r4                      //Get SP_irq   
+
+  CPS         #(0x1f)             //Go to sys                    
+  MOV LR, r5                      //Get LR_sys
+  MOV SP, r6                      //Get SP_Sys
+
+  CPS         #(0x13)             //Go to svc 
+  MOV LR, r7                      //Get LR_svc      
   MOV SP, r8                      //Get SP_svc
   CPS         #(0x12)             
             
   MSR SPSR, r9
-  
-  LDMFD SP!, {r0-r12, PC}^        //returns procesor in sys mode
+  LDMFD SP!, {r0-r12, PC}^        
 
 /* Stack pointer structure on kernel_handler_irq call
   sp_irq    <- *sp (in r0)
+  lr_sys
   sp_sys
+  lr_svc
   sp_svc
   spsr
   r0        <- sp_irq que esta en el stack apunta aca

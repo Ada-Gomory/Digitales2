@@ -31,7 +31,8 @@ table:
   LDR PC, _irq_handler
   LDR PC, _fiq_handler
 
-  _reset_vector: .word reset_vector
+//                            //NOTE branch to idle on reset rather tham reset for easier debbuging
+  _reset_vector: .word reset_vector //__idle
   _undef_handler: .word undef_handler
   _softirq_hanlder: .word softirq_hanlder
   _pref_abort: .word pref_abort

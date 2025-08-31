@@ -2,7 +2,7 @@
 #include "../../inc/include.h" 
 
 void* __kernel_handler_irq(void* sp); //TODO move to app .h
-void __kernel_handler_swi(char* s, int d);
+void* __kernel_handler_swi(const void* sp, int code);  //NOTE prolly unncesary tu return sp
 
 extern _gicc_t* const GICC0; 
 extern _timer_t* const TIMER0;
@@ -29,10 +29,20 @@ __attribute__((section(".kernel_text"))) void* __kernel_handler_irq(void* sp) {
   return sp;
 }
 
-__attribute__((section(".kernel_text"))) void __kernel_handler_swi(char* s, int d) {
+__attribute__((section(".kernel_text")))void* __kernel_handler_swi(const void* sp, int code) {
+  /* Stack pointer structure on kernel_handler_irq call
+    sp_svc   <-*sp
+    spsr     <-*(sp+1)
+    ..rX..   <-*(sp+2+X)
+    lr       <-*(sp+15)
+  */
 
-  //TODO check svc code; assuming 0
-  Printf(s,d);
+  if (code == 2){
+    char*s = (char*)(*(((uint32_t* )sp)+2));  //more fun pointer bs
+    uint32_t d = *(((uint32_t* )sp)+3);       //(to get r0 and r1)
 
-  return;
+    Printf(s, d);
+  }
+
+  return sp;
 }
