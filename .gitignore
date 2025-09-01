@@ -19,7 +19,5 @@
 !*/
 
 #Ignore Misc Dirs
-vscode/
-practica-clases/
-tp-template/
-baremetal_tools/
+!this.code-workspace
+!.gdbinit

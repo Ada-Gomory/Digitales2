@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "/opt/ddd"
+		}
+  ],
+  "settings": {
+    "files.associations": {
+      "include.h": "c",
+      "low_level_cpu_access.h": "c",
+      "stddef.h": "c",
+      "executor": "c",
+      "io_context": "c",
+      "stdarg.h": "c",
+      "thread": "c",
+      "text_encoding": "c",
+      "dummy.h": "c",
+      "define.h": "c",
+      "random": "c"
+    }
+  }
+}
